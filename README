@@ -36,6 +36,10 @@ Installation
     make -j all
     make install
 
+  NOTE! On Ubuntu24.04 compile and install the program:
+
+    make -j all INCDIRS=-I/usr/include/lua5.4 LIBLUA=-llua5.4 SSLCAFILE=/etc/ssl/certs/ca-certificates.crt
+    make install
 
 Documentation
 
