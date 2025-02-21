@@ -142,6 +142,23 @@ open_connection(session *ssn, const char *server, const char *port,
 	return ssn->socket;
 }
 
+static int ssl_set_verify_partial(SSL_CTX *ctx)
+{
+  int rv = 0;
+  X509_VERIFY_PARAM *param = X509_VERIFY_PARAM_new();
+  if (param) {
+    X509_VERIFY_PARAM_set_flags(param, X509_V_FLAG_PARTIAL_CHAIN);
+    if (SSL_CTX_set1_param(ctx, param) == 0) {
+      error("ssl_set_verify_partial: SSL_CTX_set1_param() failed.\n");
+      rv = -1;
+    }
+    X509_VERIFY_PARAM_free(param);
+  } else {
+    error("ssl_set_verify_partial: X509_VERIFY_PARAM_new failed.\n");
+    rv = -1;
+  }
+  return rv;
+}
 
 /*
  * Initialize SSL/TLS connection.
@@ -185,6 +202,8 @@ open_secure_connection(session *ssn, const char *server, const char *sslproto)
 		      "not supported by current build", server);
 		return handle_secure_open_error(ssn);
 	}
+
+	ssl_set_verify_partial(ctx);
 
 	if (!(ssn->sslconn = SSL_new(ctx)))
 		return handle_secure_open_error(ssn);
