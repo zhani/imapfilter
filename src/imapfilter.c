@@ -138,7 +138,7 @@ main(int argc, char *argv[])
 	SSL_library_init();
 	SSL_load_error_strings();
 #if OPENSSL_VERSION_NUMBER >= 0x1010000fL
-	sslctx = SSL_CTX_new(TLS_method());
+	sslctx = SSL_CTX_new(TLS_client_method());
 #else
 	ssl23ctx = SSL_CTX_new(SSLv23_client_method());
 #ifndef OPENSSL_NO_SSL3_METHOD
